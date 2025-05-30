@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +33,7 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private Status status;
     
+    @NotBlank
     private String telefone;
     
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
@@ -133,7 +135,7 @@ public class Pedido {
     }
 
     public enum Status {
-        ABERTO, CANCELADO, PRONTO, ENTREGUE
+        ABERTO, PRONTO, ENTREGUE
     }
     
 }

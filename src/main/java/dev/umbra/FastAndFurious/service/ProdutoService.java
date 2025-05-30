@@ -22,11 +22,7 @@ public class ProdutoService {
     ProdutoRepository produtoRepo;
 
     public boolean existsById(Long id) {
-        if (produtoRepo.existsById(id)) {
-            return true;
-        } else {
-            return false;
-        }
+        return produtoRepo.existsById(id);
     }
 
     public Optional<Produto> findById(Long id) {

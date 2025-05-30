@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,15 +40,20 @@ public class Produto {
     
     @NotNull
     private Double preco;
+    
+    @ManyToOne
+    @JoinColumn(name = "pedido_id", nullable = false)  // Adiciona a chave estrangeira
+    private Pedido pedido;
 
     public Produto() {}
 
-    public Produto(Long id, String nome, String categoria, String descricao, Double preco) {
+    public Produto(Long id, String nome, String categoria, String descricao, Double preco, Pedido pedido) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
         this.descricao = descricao;
         this.preco = preco;
+        this.pedido = pedido;
     }
 
     public Long getId() {
@@ -88,6 +95,16 @@ public class Produto {
     public void setPreco(Double preco) {
         this.preco = preco;
     }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
+
+    
 
     @Override
     public int hashCode() {

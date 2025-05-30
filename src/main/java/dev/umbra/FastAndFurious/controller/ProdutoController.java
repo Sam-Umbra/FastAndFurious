@@ -49,6 +49,15 @@ public class ProdutoController {
             return ResponseEntity.ok(produtoService.listarProdutos());
         }
     }
+    
+    @GetMapping("/cat/{categoria}")
+    public ResponseEntity<List<Produto>> findByCategoria(String categoria) {
+        if (produtoService.listByCategoria(categoria).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(produtoService.listByCategoria(categoria));
+        }
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
