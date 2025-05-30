@@ -4,8 +4,12 @@
  */
 package dev.umbra.FastAndFurious.controller;
 
+import dev.umbra.FastAndFurious.DTO.PedidoRequest;
+import dev.umbra.FastAndFurious.DTO.StatusRequest;
 import dev.umbra.FastAndFurious.entities.Pedido;
+import dev.umbra.FastAndFurious.entities.Produto;
 import dev.umbra.FastAndFurious.service.PedidoService;
+import dev.umbra.FastAndFurious.service.ProdutoService;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +36,9 @@ public class PedidoController {
     
     @Autowired
     PedidoService pedidoService;
+    
+    @Autowired
+    ProdutoService produtoService;
     
     @GetMapping("{id}")
     public ResponseEntity<Pedido> findById(@PathVariable Long id) {
@@ -64,10 +71,22 @@ public class PedidoController {
         
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Pedido adicionarPedido(@Valid @RequestBody Pedido pedido) {
+    public Pedido adicionarPedido(@Valid @RequestBody PedidoRequest pedidoRequest) {
+        
+        Pedido pedido = new Pedido();
+        
         pedido.setDataAbertura(LocalDateTime.now());
         pedido.setStatus(Pedido.Status.ABERTO);
         pedido.setPrazo(pedido.getDataAbertura().plusMinutes(14));
+        pedido.setTelefone(pedidoRequest.getTelefone());
+        
+        List<Produto> produtos = pedidoRequest.getProdutoId().stream()
+        .map(id -> produtoService.findById(id)
+        .orElseThrow(() -> new RuntimeException("Erro ao encontrar Produto com id: " + id)))
+        .toList();
+        
+        pedido.setProdutos(produtos);
+        
         return pedidoService.salvarPedido(pedido);
     }
     
@@ -96,11 +115,11 @@ public class PedidoController {
     
     @PutMapping("/status/{id}")
     public ResponseEntity<Pedido> alterarStatus(@PathVariable Long id, 
-                                                @RequestBody Pedido.Status status) {
+                                                @RequestBody StatusRequest statusRequest) {
         
         if (pedidoService.existsById(id)) {
             Pedido pedido = pedidoService.findById(id).get();
-            pedido = pedidoService.alterarStatus(id, status);
+            pedido = pedidoService.alterarStatus(id, statusRequest.getStatus());
             return ResponseEntity.ok(pedido);
         } else {
             return ResponseEntity.notFound().build();

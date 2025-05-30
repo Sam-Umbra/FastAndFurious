@@ -4,14 +4,16 @@
  */
 package dev.umbra.FastAndFurious.entities;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -34,9 +36,15 @@ public class Pedido {
     private Status status;
     
     @NotBlank
+    @Column(nullable = false)
     private String telefone;
     
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "pedidos_produtos",
+            joinColumns = @JoinColumn(name = "pedido_id"),
+            inverseJoinColumns = @JoinColumn(name = "produto_id")
+    )
     private List<Produto> produtos;
     
     private LocalDateTime dataAbertura;

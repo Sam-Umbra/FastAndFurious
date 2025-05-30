@@ -9,51 +9,46 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.Objects;
+import java.math.BigDecimal;
 
 /**
  *
  * @author Sam_Umbra
  */
-
 @Entity
 @Table(name = "produtos")
 public class Produto {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotBlank
+    @Column(nullable = false)
     private String nome;
-    
+
     @NotBlank
+    @Column(nullable = false)
     private String categoria;
-    
+
     @NotBlank
+    @Column(nullable = false)
     private String descricao;
-    
+
     @NotNull
-    private Double preco;
-    
-    @ManyToOne
-    @JoinColumn(name = "pedido_id", nullable = false)  // Adiciona a chave estrangeira
-    private Pedido pedido;
+    @Column(nullable = false)
+    private BigDecimal preco;
 
     public Produto() {}
 
-    public Produto(Long id, String nome, String categoria, String descricao, Double preco, Pedido pedido) {
-        this.id = id;
+    public Produto(String nome, String categoria, String descricao, BigDecimal preco) {
         this.nome = nome;
         this.categoria = categoria;
         this.descricao = descricao;
         this.preco = preco;
-        this.pedido = pedido;
     }
 
     public Long getId() {
@@ -88,45 +83,13 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public Double getPreco() {
+    public BigDecimal getPreco() {
         return preco;
     }
 
-    public void setPreco(Double preco) {
+    public void setPreco(BigDecimal preco) {
         this.preco = preco;
     }
 
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
-
-    
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 19 * hash + Objects.hashCode(this.id);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Produto other = (Produto) obj;
-        return Objects.equals(this.id, other.id);
-    }
-    
     
 }
