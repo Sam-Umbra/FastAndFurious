@@ -68,8 +68,8 @@ public class ProdutoController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Produto> updateProduto(@Valid @PathVariable Long id,
-            @RequestBody Produto produto) {
+    public ResponseEntity<Produto> updateProduto(@PathVariable Long id,
+                                        @Valid @RequestBody Produto produto) {
 
         if (produtoService.existsById(id)) {
             produto.setId(id);

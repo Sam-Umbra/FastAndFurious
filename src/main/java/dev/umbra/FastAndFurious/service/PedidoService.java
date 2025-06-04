@@ -7,6 +7,7 @@ package dev.umbra.FastAndFurious.service;
 import dev.umbra.FastAndFurious.entities.Pedido;
 import dev.umbra.FastAndFurious.repositories.PedidoRepository;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,13 +46,9 @@ public class PedidoService {
         return (List<Pedido>) pedidoRepo.findByStatus(status);
     }
     
-    public Pedido alterarStatus(Long id, Pedido.Status status) {
-        Pedido pedido = pedidoRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException
-                ("Pedido com ID " + id + " não encontrado"));
-        
+    public Pedido alterarStatus(Pedido pedido, Pedido.Status status) {
         if (pedido.getStatus() == Pedido.Status.ENTREGUE) {
-            throw new RuntimeException
+            throw new IllegalArgumentException
             ("Não é possível alterar o status de um pedido já entregue.");
         }
         
