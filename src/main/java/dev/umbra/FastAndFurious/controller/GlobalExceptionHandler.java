@@ -32,24 +32,25 @@ public class GlobalExceptionHandler {
 
         String msg = ex.getMessage();
 
-        if (msg != null && msg.startsWith("[")) {
-            // Trata como lista de produtos não encontrados
+        if (msg != null && msg.startsWith("[") && msg.endsWith("]")) {
             body.put("message", "Produtos não encontrados");
 
-            List<Long> idsNaoEncontrados = new ArrayList<>();
             try {
+                // Remove colchetes e espaços
                 String clean = msg.replaceAll("[\\[\\]\\s]", "");
-                if (!clean.isEmpty()) {
-                    idsNaoEncontrados = Arrays.stream(clean.split(","))
-                            .map(Long::parseLong)
-                            .toList();
-                }
+                List<Long> idsNaoEncontrados = Arrays.stream(clean.split(","))
+                        .filter(s -> !s.isBlank()) // evita parse de string vazia
+                        .map(Long::parseLong)
+                        .toList();
+
+                body.put("idsNaoEncontrados", idsNaoEncontrados);
             } catch (Exception e) {
-                // log ou ignore
+                // Fallback: se parsing falhar, mantém a mensagem original
+                body.put("message", msg);
             }
-            body.put("idsNaoEncontrados", idsNaoEncontrados);
+
         } else {
-            // Mensagem genérica para outros casos
+            // Mensagem genérica
             body.put("message", msg);
         }
 
@@ -63,8 +64,19 @@ public class GlobalExceptionHandler {
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
         body.put("message", ex.getMessage());
-        
+
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+    
 
 }

@@ -16,6 +16,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -27,18 +29,18 @@ import java.util.Objects;
 @Entity
 @Table(name = "pedidos")
 public class Pedido {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     private Status status;
-    
+
     @NotBlank
     @Column(nullable = false)
     private String telefone;
-    
+
     @ManyToMany
     @JoinTable(
             name = "pedidos_produtos",
@@ -46,15 +48,19 @@ public class Pedido {
             inverseJoinColumns = @JoinColumn(name = "produto_id")
     )
     private List<Produto> produtos;
-    
+
     private LocalDateTime dataAbertura;
     private LocalDateTime dataFinalizacao;
     private LocalDateTime prazo;
 
+    @Column(name = "valor_total")
+    @NotNull
+    private BigDecimal valorTotal;
+
     public Pedido() {
     }
 
-    public Pedido(Long id, Status status, String telefone, List<Produto> produtos, LocalDateTime dataAbertura, LocalDateTime dataFinalizacao, LocalDateTime prazo) {
+    public Pedido(Long id, Status status, String telefone, List<Produto> produtos, LocalDateTime dataAbertura, LocalDateTime dataFinalizacao, LocalDateTime prazo, BigDecimal valorTotal) {
         this.id = id;
         this.status = status;
         this.telefone = telefone;
@@ -62,14 +68,29 @@ public class Pedido {
         this.dataAbertura = dataAbertura;
         this.dataFinalizacao = dataFinalizacao;
         this.prazo = prazo;
+        this.valorTotal = valorTotal;
     }
 
-    public List<Produto> getProdutos() {
-        return produtos;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.id);
+        return hash;
     }
 
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Pedido other = (Pedido) obj;
+        return Objects.equals(this.id, other.id);
     }
 
     public Long getId() {
@@ -95,7 +116,15 @@ public class Pedido {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-    
+
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<Produto> produtos) {
+        this.produtos = produtos;
+    }
+
     public LocalDateTime getDataAbertura() {
         return dataAbertura;
     }
@@ -111,7 +140,7 @@ public class Pedido {
     public void setDataFinalizacao(LocalDateTime dataFinalizacao) {
         this.dataFinalizacao = dataFinalizacao;
     }
-    
+
     public LocalDateTime getPrazo() {
         return prazo;
     }
@@ -119,31 +148,17 @@ public class Pedido {
     public void setPrazo(LocalDateTime prazo) {
         this.prazo = prazo;
     }
-    
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.id);
-        return hash;
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Pedido other = (Pedido) obj;
-        return Objects.equals(this.id, other.id);
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
     public enum Status {
         ABERTO, PRONTO, ENTREGUE
     }
-    
+
 }

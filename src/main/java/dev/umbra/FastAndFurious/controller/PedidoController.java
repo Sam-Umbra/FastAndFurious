@@ -11,6 +11,7 @@ import dev.umbra.FastAndFurious.entities.Produto;
 import dev.umbra.FastAndFurious.service.PedidoService;
 import dev.umbra.FastAndFurious.service.ProdutoService;
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -94,7 +95,12 @@ public class PedidoController {
                 .map(id -> produtoService.findById(id).get())
                 .toList();
 
+        BigDecimal valorTotal = produtos.stream()
+                .map(Produto::getPreco)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         pedido.setProdutos(produtos);
+        pedido.setValorTotal(valorTotal);
 
         return pedidoService.salvarPedido(pedido);
     }
@@ -111,7 +117,7 @@ public class PedidoController {
 
     @PutMapping("{id}")
     public ResponseEntity<Pedido> updatePedido(@PathVariable Long id,
-                                            @Valid @RequestBody Pedido pedido) {
+            @Valid @RequestBody Pedido pedido) {
 
         if (pedidoService.existsById(id)) {
             pedido.setId(id);
@@ -121,14 +127,15 @@ public class PedidoController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @PutMapping("/status/{id}")
     public ResponseEntity<Pedido> alterarStatus(@PathVariable Long id,
-                                    @RequestBody StatusRequest statusRequest) {
-        
+            @RequestBody StatusRequest statusRequest) {
+
         Pedido pedido = pedidoService.findById(id)
-                .orElseThrow(() -> new NoSuchElementException
-                ("Pedido com ID " + id + " não encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Pedido com ID " + id + " não encontrado"));
+        
+        if (statusRequest.getStatus().equals(Pedido.Status.ENTREGUE)) { pedido.setDataFinalizacao(LocalDateTime.now()); }
 
         pedido = pedidoService.alterarStatus(pedido, statusRequest.getStatus());
 
