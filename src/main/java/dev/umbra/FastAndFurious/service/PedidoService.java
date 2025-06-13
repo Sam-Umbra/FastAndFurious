@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class PedidoService {
 
     @Autowired
-    PedidoRepository pedidoRepo;
+    private PedidoRepository pedidoRepo;
 
     public boolean existsById(Long id) {
         return pedidoRepo.existsById(id);

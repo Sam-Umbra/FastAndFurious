@@ -37,10 +37,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class PedidoController {
 
     @Autowired
-    PedidoService pedidoService;
+    private PedidoService pedidoService;
 
     @Autowired
-    ProdutoService produtoService;
+    private ProdutoService produtoService;
 
     @GetMapping("{id}")
     public ResponseEntity<Pedido> findById(@PathVariable Long id) {

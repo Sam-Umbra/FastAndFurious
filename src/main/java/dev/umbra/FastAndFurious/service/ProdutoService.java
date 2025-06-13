@@ -19,7 +19,7 @@ import java.util.List;
 public class ProdutoService {
 
     @Autowired
-    ProdutoRepository produtoRepo;
+    private ProdutoRepository produtoRepo;
 
     public boolean existsById(Long id) {
         return produtoRepo.existsById(id);

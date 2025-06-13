@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ProdutoController {
 
     @Autowired
-    ProdutoService produtoService;
+    private ProdutoService produtoService;
 
     @GetMapping("{id}")
     public ResponseEntity<Produto> findById(@PathVariable Long id) {
